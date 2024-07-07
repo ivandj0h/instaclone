@@ -1,0 +1,34 @@
+# docker-compose.yml
+
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql-container
+    env_file:
+      - .env.local
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - app-network
+
+  nextjs:
+    build: .
+    container_name: nextjs-container
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    env_file:
+      - .env.local
+    command: "npm run dev"
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
